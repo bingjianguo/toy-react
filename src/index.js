@@ -4,12 +4,18 @@ class MyComponent extends ToyReact.Component {
 
   render() {
     return (
-      <div>cool</div>
+      <div>
+        <span>hello</span>
+        <span>world!</span>
+        <div>
+          {this.children}
+        </div>
+      </div>
     )
   }
 
 }
-let a = <MyComponent />;
+let a = <MyComponent name="a" id="ida"><div>ddd</div></MyComponent>;
 
 ToyReact.render(
   a,

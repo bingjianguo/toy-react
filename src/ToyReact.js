@@ -1,21 +1,6 @@
 /**
  * 描述一个真实的Dom元素
  */
-class Wrapper {
-  constructor(type) {
-    this.root = document.createElement(type);
-  }
-
-  setAttributes(name, value) {
-    this.root.setAttribute(name, value);
-  }
-
-  appendChild(vchild) {
-    vchild.mountTo(this.root);
-  }
-}
-
-
 class ElementWrapper {
   constructor(type) {
     this.root = document.createElement(type);
@@ -45,7 +30,10 @@ class TextWrapper {
 }
 
 export class Component {
-    /**
+  constructor() {
+    this.children = [];
+  }
+  /**
    * 后续用作继承的成员函数
    * @param {*} parent 
    */
@@ -56,6 +44,10 @@ export class Component {
 
   setAttribute(name, value) {
     this[name] = value;
+  }
+
+  appendChild(vchild) {
+    this.children.push(vchild);
   }
 }
 
@@ -68,7 +60,6 @@ export class Component {
 export function createElement(type, attributes, ...children) {
   let element;
   if (typeof type === 'string') {
-    debugger;
     element = new ElementWrapper(type);
   } else {
     element = new type;
@@ -78,12 +69,29 @@ export function createElement(type, attributes, ...children) {
     element.setAttribute(name, attributes[name]);
   }
 
-  for (let child of children) {
-    if (typeof child === 'string') {
-      child = new TextWrapper(child);
+  let insertChildren = (children) => {
+    for (let child of children) {
+  
+      if (typeof child === 'object' && child instanceof Array) {
+        insertChildren(child);
+      } else {
+        if (typeof child === 'string') {
+          child = new TextWrapper(child);
+        } 
+        else if (
+          !(child instanceof Component)
+          && !(child instanceof ElementWrapper)
+          && !(child instanceof TextWrapper)
+        ) {
+          child = String(child);
+        }
+        element.appendChild(child);
+      }
+      
     }
-    element.appendChild(child);
   }
+  insertChildren(children);
+
   return element;
 }
 /**
@@ -92,7 +100,6 @@ export function createElement(type, attributes, ...children) {
  * @param {*} element 
  */
 export function render(vdom, element) {
-  debugger;
   vdom.mountTo(element);
   // element.appendChild(vdom);
 }
