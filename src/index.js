@@ -23,21 +23,14 @@ function calculateWinner(squares) {
 
 
 class Square extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      value: null
-    }
-  }
 
   componentDidMount() {
   }
 
   render() {
-    const { value } = this.state;
     return (
-      <button className="square" onClick={ () => this.setState({ value: 'x'})}>
-        { value ? value : '' }
+      <button className="square" onClick={this.props.onClick}>
+        { this.props.value }
       </button>
     );
   }
@@ -48,8 +41,8 @@ class Board extends Component {
   renderSquare(i) {
     return (
       <Square
-        value={i}
-        onClick={() => { }}
+        value={this.props.squares[i]}
+        onClick={() => this.props.onClick(i)}
       />
     );
   }
@@ -139,7 +132,6 @@ class Game extends Component {
     } else {
       status = "Next player: " + (this.state.xIsNext ? "X" : "O");
     }
-
     return (
       <div className="game">
         <div className="game-board">
@@ -160,8 +152,6 @@ class Game extends Component {
 
 
 ToyReact.render(
-  <Board
-    squares={Array(9).fill(null)}
-  />,
+  <Game />,
   document.body
 )
